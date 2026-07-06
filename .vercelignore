@@ -1,0 +1,12 @@
+# Build artifacts
+.next
+out
+node_modules
+.env*.local
+
+# Development files
+.DS_Store
+*.log
+*.swp
+.vscode
+.idea
