@@ -32,7 +32,7 @@ export default function AddressesPage() {
           <h1 className="text-3xl font-display font-bold text-ivory-50">آدرس‌های من</h1>
         </div>
       </div>
-      <div className="container-band py-8">
+      <div className="container-brand py-8">
         <div className="flex flex-col lg:flex-row gap-6">
           <AccountSidebar />
           <div className="flex-1">
