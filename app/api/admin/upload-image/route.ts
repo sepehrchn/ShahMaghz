@@ -2,10 +2,12 @@
  * Image Upload API Route
  * Handles server-side image uploads to Cloudinary
  * Usage: POST /api/admin/upload-image with FormData containing 'file'
+ * 
+ * Note: Cloudinary integration is optional. Install 'cloudinary' package and configure
+ * environment variables to enable real image uploads.
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { uploadImage } from '@/lib/cloudinary';
 
 export async function POST(req: NextRequest) {
   try {
@@ -35,6 +37,25 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         { error: 'File size must be less than 10MB' },
         { status: 400 }
+      );
+    }
+
+    // Check if cloudinary is configured
+    let uploadImage: ((buffer: Buffer, folder: string) => Promise<string>) | null = null;
+    
+    try {
+      // Dynamically import cloudinary only if available
+      const cloudinaryModule = await import('@/lib/cloudinary');
+      uploadImage = cloudinaryModule.uploadImage;
+    } catch (error) {
+      // Cloudinary not configured - return helpful message
+      return NextResponse.json(
+        {
+          error: 'Image upload not configured',
+          message: 'Install cloudinary package and configure CLOUDINARY_* environment variables to enable image uploads',
+          hint: 'npm install cloudinary',
+        },
+        { status: 501 } // Not Implemented
       );
     }
 
