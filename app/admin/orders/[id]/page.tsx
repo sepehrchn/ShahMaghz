@@ -21,6 +21,7 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
   const { orders, cancelOrder } = useOrderStore();
   const order = orders.find((o) => o.id === id);
   const [saved, setSaved] = useState(false);
+  const [currentStatus, setCurrentStatus] = useState<OrderStatus>(order?.status ?? "PENDING");
 
   if (!order) {
     return (
@@ -34,12 +35,7 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
     );
   }
 
-  // Local state for status update (since we don't have a full update function)
-  const [currentStatus, setCurrentStatus] = useState<OrderStatus>(order.status);
-
   const handleSave = () => {
-    // In a real app, this would call an API
-    // For now we just show saved feedback
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
@@ -59,9 +55,7 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
-        {/* Items + shipping — 2 cols */}
         <div className="lg:col-span-2 flex flex-col gap-6">
-          {/* Items */}
           <div className="bg-forest-800/50 border border-forest-600/30 rounded-2xl p-6">
             <h2 className="text-sm font-display font-bold text-gold-200 mb-4">اقلام سفارش</h2>
             <div className="flex flex-col gap-4">
@@ -84,7 +78,6 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
             </div>
           </div>
 
-          {/* Shipping address */}
           <div className="bg-forest-800/50 border border-forest-600/30 rounded-2xl p-6">
             <h2 className="text-sm font-display font-bold text-gold-200 mb-4 flex items-center gap-2">
               <MapPin size={16} />
@@ -105,9 +98,7 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
           </div>
         </div>
 
-        {/* Sidebar: status + summary — 1 col */}
         <div className="flex flex-col gap-6">
-          {/* Status management */}
           <div className="bg-forest-800/50 border border-forest-600/30 rounded-2xl p-5">
             <h3 className="text-sm font-display font-bold text-gold-200 mb-4">مدیریت وضعیت</h3>
             <div className="flex flex-col gap-2">
@@ -133,7 +124,6 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
             </Button>
           </div>
 
-          {/* Price summary */}
           <div className="bg-forest-800/50 border border-forest-600/30 rounded-2xl p-5">
             <h3 className="text-sm font-display font-bold text-gold-200 mb-4">خلاصه مالی</h3>
             <div className="flex flex-col gap-2 text-sm">
