@@ -1,22 +1,258 @@
-// ShahMaghz — Prisma Schema
-// PostgreSQL database with full e-commerce data models
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
-// ──────────────────────────────────────────────
-//  Enums
-// ──────────────────────────────────────────────
+model addresses {
+  id          String   @id
+  userId      String
+  label       String
+  recipient   String
+  mobile      String
+  province    String
+  city        String
+  postalCode  String?
+  addressLine String
+  isDefault   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+  users       users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
 
-enum Role {
-  CUSTOMER
-  ADMIN
+model blog_posts {
+  id          String    @id
+  slug        String    @unique
+  title       String
+  excerpt     String
+  content     String
+  coverImage  String?
+  tags        String[]
+  isPublished Boolean   @default(false)
+  publishedAt DateTime?
+  authorId    String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime
+
+  @@index([slug])
+}
+
+model categories {
+  id               String       @id
+  slug             String       @unique
+  name             String
+  description      String?
+  image            String?
+  parentId         String?
+  sortOrder        Int          @default(0)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime
+  categories       categories?  @relation("categoriesTocategories", fields: [parentId], references: [id])
+  other_categories categories[] @relation("categoriesTocategories")
+  products         products[]
+}
+
+model discount_codes {
+  id             String       @id
+  code           String       @unique
+  description    String?
+  type           DiscountType
+  value          Int
+  minOrderAmount Int?
+  maxUsageCount  Int?
+  usageCount     Int          @default(0)
+  perUserLimit   Int?
+  startsAt       DateTime?
+  endsAt         DateTime?
+  isActive       Boolean      @default(true)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime
+  orders         orders[]
+}
+
+model loyalty_accounts {
+  id                   String                 @id
+  userId               String                 @unique
+  points               Int                    @default(0)
+  totalSpent           Int                    @default(0)
+  tier                 LoyaltyTier            @default(BRONZE)
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime
+  users                users                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  loyalty_transactions loyalty_transactions[]
+}
+
+model loyalty_transactions {
+  id               String           @id
+  accountId        String
+  points           Int
+  type             String
+  description      String
+  orderId          String?
+  createdAt        DateTime         @default(now())
+  loyalty_accounts loyalty_accounts @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@index([accountId])
+}
+
+model order_items {
+  id               String           @id
+  orderId          String
+  productId        String
+  variantId        String
+  quantity         Int
+  unitPrice        Int
+  totalPrice       Int
+  productName      String
+  variantLabel     String
+  createdAt        DateTime         @default(now())
+  orders           orders           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  products         products         @relation(fields: [productId], references: [id])
+  product_variants product_variants @relation(fields: [variantId], references: [id])
+}
+
+model orders {
+  id                   String          @id
+  orderNumber          String          @unique
+  userId               String?
+  guestMobile          String?
+  guestName            String?
+  shippingAddress      Json
+  subtotal             Int
+  shippingCost         Int             @default(0)
+  discountAmount       Int             @default(0)
+  totalAmount          Int
+  status               OrderStatus     @default(PENDING)
+  paymentStatus        PaymentStatus   @default(PENDING)
+  paymentProvider      String?
+  paymentTransactionId String?
+  paymentRefId         String?
+  discountCodeId       String?
+  customerNote         String?
+  adminNote            String?
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime
+  order_items          order_items[]
+  discount_codes       discount_codes? @relation(fields: [discountCodeId], references: [id])
+  users                users?          @relation(fields: [userId], references: [id])
+
+  @@index([orderNumber])
+  @@index([userId])
+}
+
+model otp_codes {
+  id        String   @id
+  userId    String?
+  mobile    String
+  code      String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  attempts  Int      @default(0)
+  createdAt DateTime @default(now())
+  users     users?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([mobile])
+}
+
+model product_variants {
+  id                String        @id
+  productId         String
+  sku               String        @unique
+  weightGrams       Int
+  packageLabel      String
+  price             Int
+  compareAtPrice    Int?
+  stock             Int           @default(0)
+  lowStockThreshold Int           @default(5)
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime
+  order_items       order_items[]
+  products          products      @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+}
+
+model products {
+  id               String             @id
+  slug             String             @unique
+  name             String
+  description      String
+  longDescription  String?
+  categoryId       String
+  images           String[]
+  tags             String[]
+  stockStatus      StockStatus        @default(IN_STOCK)
+  isFeatured       Boolean            @default(false)
+  isPremium        Boolean            @default(false)
+  sku              String             @unique
+  nutritionInfo    Json?
+  ingredients      String[]
+  storageTips      String?
+  origin           String?
+  rating           Float              @default(0)
+  reviewCount      Int                @default(0)
+  sortOrder        Int                @default(0)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime
+  order_items      order_items[]
+  product_variants product_variants[]
+  categories       categories         @relation(fields: [categoryId], references: [id])
+  reviews          reviews[]
+
+  @@index([categoryId])
+  @@index([slug])
+}
+
+model reviews {
+  id         String   @id
+  productId  String
+  userId     String?
+  authorName String
+  rating     Int
+  title      String?
+  content    String
+  isApproved Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime
+  products   products @relation(fields: [productId], references: [id], onDelete: Cascade)
+  users      users?   @relation(fields: [userId], references: [id])
+
+  @@index([productId])
+}
+
+model users {
+  id               String            @id
+  mobile           String            @unique
+  email            String?           @unique
+  passwordHash     String?
+  firstName        String?
+  lastName         String?
+  role             Role              @default(CUSTOMER)
+  isVerified       Boolean           @default(false)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime
+  addresses        addresses[]
+  loyalty_accounts loyalty_accounts?
+  orders           orders[]
+  otp_codes        otp_codes[]
+  reviews          reviews[]
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED_AMOUNT
+  FREE_SHIPPING
+}
+
+enum LoyaltyTier {
+  BRONZE
+  SILVER
+  GOLD
+  PLATINUM
 }
 
 enum OrderStatus {
@@ -36,331 +272,14 @@ enum PaymentStatus {
   REFUNDED
 }
 
+enum Role {
+  CUSTOMER
+  ADMIN
+}
+
 enum StockStatus {
   IN_STOCK
   LOW_STOCK
   OUT_OF_STOCK
   PRE_ORDER
-}
-
-enum LoyaltyTier {
-  BRONZE
-  SILVER
-  GOLD
-  PLATINUM
-}
-
-enum DiscountType {
-  PERCENTAGE
-  FIXED_AMOUNT
-  FREE_SHIPPING
-}
-
-// ──────────────────────────────────────────────
-//  User & Auth
-// ──────────────────────────────────────────────
-
-model User {
-  id            String    @id @default(cuid())
-  mobile        String    @unique
-  email         String?   @unique
-  passwordHash  String?
-  firstName     String?
-  lastName      String?
-  role          Role      @default(CUSTOMER)
-  isVerified    Boolean   @default(false)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  addresses     Address[]
-  orders        Order[]
-  reviews       Review[]
-  loyaltyAccount LoyaltyAccount?
-  otpCodes      OtpCode[]
-
-  @@map("users")
-}
-
-model OtpCode {
-  id        String   @id @default(cuid())
-  userId    String?
-  mobile    String
-  code      String
-  expiresAt DateTime
-  used      Boolean  @default(false)
-  attempts  Int      @default(0)
-  createdAt DateTime @default(now())
-
-  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([mobile])
-  @@map("otp_codes")
-}
-
-model Address {
-  id         String  @id @default(cuid())
-  userId     String
-  label      String  // عنوان آدرس (خانه، محل کار و ...)
-  recipient  String
-  mobile     String
-  province   String
-  city       String
-  postalCode String?
-  addressLine String
-  isDefault  Boolean @default(false)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("addresses")
-}
-
-// ──────────────────────────────────────────────
-//  Catalog
-// ──────────────────────────────────────────────
-
-model Category {
-  id          String   @id @default(cuid())
-  slug        String   @unique
-  name        String   // Persian name
-  description String?
-  image       String?
-  parentId   String?
-  sortOrder   Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  parent      Category? @relation("CategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
-  children    Category[] @relation("CategoryTree")
-  products    Product[]
-
-  @@map("categories")
-}
-
-model Product {
-  id           String      @id @default(cuid())
-  slug         String      @unique
-  name         String      // Persian name
-  description  String      // Persian description — origin, tasting notes, etc.
-  longDescription String?  // Extended Persian copy for product page
-  categoryId   String
-  images       String[]    // S3 URLs
-  tags         String[]
-  stockStatus  StockStatus @default(IN_STOCK)
-  isFeatured   Boolean     @default(false)
-  isPremium    Boolean     @default(false) // Shows wax-seal badge
-  sku          String      @unique
-  nutritionInfo Json?      // { calories, fat, protein, carbs, ... }
-  ingredients  String[]    // Persian ingredient list
-  storageTips  String?     // Persian storage guidance
-  origin       String?     // Persian — region of origin
-  rating       Float       @default(0)
-  reviewCount  Int         @default(0)
-  sortOrder    Int         @default(0)
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
-
-  category     Category    @relation(fields: [categoryId], references: [id])
-  variants     ProductVariant[]
-  reviews      Review[]
-  orderItems   OrderItem[]
-
-  @@index([categoryId])
-  @@index([slug])
-  @@map("products")
-}
-
-model ProductVariant {
-  id          String      @id @default(cuid())
-  productId   String
-  sku         String      @unique
-  weightGrams Int         // Weight in grams (0 for non-weight items like gift boxes)
-  packageLabel String     // Persian label: "۲۵۰ گرمی", "بسته ۵۰۰ گرمی", etc.
-  price       Int         // Price in IRR (Toman)
-  compareAtPrice Int?     // Original price for discount display
-  stock       Int         @default(0)
-  lowStockThreshold Int   @default(5)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-
-  product     Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
-  orderItems  OrderItem[]
-
-  @@index([productId])
-  @@map("product_variants")
-}
-
-// ──────────────────────────────────────────────
-//  Orders & Checkout
-// ──────────────────────────────────────────────
-
-model Order {
-  id              String        @id @default(cuid())
-  orderNumber     String        @unique
-  userId          String?
-  guestMobile     String?
-  guestName       String?
-
-  // Shipping
-  shippingAddress Json          // { recipient, mobile, province, city, addressLine, postalCode }
-
-  // Pricing (all in IRR / Toman)
-  subtotal        Int
-  shippingCost    Int           @default(0)
-  discountAmount  Int           @default(0)
-  totalAmount     Int
-
-  // Status
-  status          OrderStatus   @default(PENDING)
-  paymentStatus   PaymentStatus @default(PENDING)
-
-  // Payment
-  paymentProvider String?       // "zarinpal", "idpay", etc.
-  paymentTransactionId String?  // Gateway transaction ID
-  paymentRefId    String?       // Authority/ref code from gateway
-
-  // Discount
-  discountCodeId  String?
-
-  // Notes
-  customerNote    String?
-  adminNote       String?
-
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-
-  user            User?         @relation(fields: [userId], references: [id])
-  items           OrderItem[]
-  discountCode    DiscountCode? @relation(fields: [discountCodeId], references: [id])
-
-  @@index([userId])
-  @@index([orderNumber])
-  @@map("orders")
-}
-
-model OrderItem {
-  id           String   @id @default(cuid())
-  orderId      String
-  productId    String
-  variantId    String
-  quantity     Int
-  unitPrice    Int      // Price at time of purchase
-  totalPrice   Int      // unitPrice * quantity
-
-  // Snapshot of product data at purchase time
-  productName  String
-  variantLabel String
-
-  createdAt    DateTime @default(now())
-
-  order        Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  product      Product        @relation(fields: [productId], references: [id])
-  variant      ProductVariant @relation(fields: [variantId], references: [id])
-
-  @@map("order_items")
-}
-
-// ──────────────────────────────────────────────
-//  Discounts
-// ──────────────────────────────────────────────
-
-model DiscountCode {
-  id            String       @id @default(cuid())
-  code          String       @unique
-  description   String?      // Persian description
-  type          DiscountType
-  value         Int          // Percentage (0-100) or fixed amount in IRR
-  minOrderAmount Int?        // Minimum order total to apply
-  maxUsageCount Int?         // Total usage limit
-  usageCount    Int          @default(0)
-  perUserLimit  Int?         // Max uses per customer
-  startsAt      DateTime?
-  endsAt        DateTime?
-  isActive      Boolean      @default(true)
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
-
-  orders        Order[]
-
-  @@map("discount_codes")
-}
-
-// ──────────────────────────────────────────────
-//  Loyalty
-// ──────────────────────────────────────────────
-
-model LoyaltyAccount {
-  id           String             @id @default(cuid())
-  userId       String             @unique
-  points       Int                @default(0)
-  totalSpent   Int                @default(0)  // Lifetime spend in IRR
-  tier         LoyaltyTier        @default(BRONZE)
-  createdAt    DateTime           @default(now())
-  updatedAt    DateTime           @updatedAt
-
-  user         User               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  transactions LoyaltyTransaction[]
-
-  @@map("loyalty_accounts")
-}
-
-model LoyaltyTransaction {
-  id          String   @id @default(cuid())
-  accountId   String
-  points      Int      // Positive for earn, negative for redeem
-  type        String   // "EARN", "REDEEM", "EXPIRE", "ADJUST"
-  description String   // Persian description
-  orderId     String?
-  createdAt   DateTime @default(now())
-
-  account     LoyaltyAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
-
-  @@index([accountId])
-  @@map("loyalty_transactions")
-}
-
-// ──────────────────────────────────────────────
-//  Blog
-// ──────────────────────────────────────────────
-
-model BlogPost {
-  id          String   @id @default(cuid())
-  slug        String   @unique
-  title       String   // Persian
-  excerpt     String   // Persian summary
-  content     String   // Persian full content (markdown)
-  coverImage  String?
-  tags        String[]
-  isPublished Boolean  @default(false)
-  publishedAt DateTime?
-  authorId    String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@index([slug])
-  @@map("blog_posts")
-}
-
-// ──────────────────────────────────────────────
-//  Reviews
-// ──────────────────────────────────────────────
-
-model Review {
-  id        String   @id @default(cuid())
-  productId String
-  userId    String?
-  authorName String  // Persian display name
-  rating    Int      // 1-5
-  title     String?  // Persian
-  content   String   // Persian review text
-  isApproved Boolean @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
-
-  @@index([productId])
-  @@map("reviews")
 }
