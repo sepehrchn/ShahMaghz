@@ -3,8 +3,9 @@
  * Handles server-side image uploads to Cloudinary
  * Usage: POST /api/admin/upload-image with FormData containing 'file'
  * 
- * Note: Cloudinary integration is optional. Install 'cloudinary' package and configure
- * environment variables to enable real image uploads.
+ * Note: Cloudinary integration is optional. This endpoint returns a helpful message
+ * when cloudinary is not configured. Install 'cloudinary' package and set up
+ * CLOUDINARY_* environment variables to enable real image uploads.
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -40,45 +41,31 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Check if cloudinary is configured
-    let uploadImage: ((buffer: Buffer, folder: string) => Promise<string>) | null = null;
-    
-    try {
-      // Dynamically import cloudinary only if available
-      const cloudinaryModule = await import('@/lib/cloudinary');
-      uploadImage = cloudinaryModule.uploadImage;
-    } catch (error) {
-      // Cloudinary not configured - return helpful message
-      return NextResponse.json(
-        {
-          error: 'Image upload not configured',
-          message: 'Install cloudinary package and configure CLOUDINARY_* environment variables to enable image uploads',
-          hint: 'npm install cloudinary',
+    // Return helpful message since cloudinary is not configured
+    // To enable: npm install cloudinary, then configure environment variables
+    return NextResponse.json(
+      {
+        error: 'Image upload not configured',
+        message: 'Cloudinary integration is not set up. To enable image uploads:',
+        steps: [
+          '1. Install cloudinary: npm install cloudinary',
+          '2. Set environment variables: CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET',
+          '3. Uncomment the cloudinary import in this file',
+        ],
+        fileInfo: {
+          name: file.name,
+          size: file.size,
+          type: file.type,
         },
-        { status: 501 } // Not Implemented
-      );
-    }
-
-    // Convert file to buffer
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-
-    // Upload to Cloudinary
-    const folder = formData.get('folder') as string || 'product-images';
-    const imageUrl = await uploadImage(buffer, folder);
-
-    // Return success response with image URL
-    return NextResponse.json({
-      success: true,
-      url: imageUrl,
-      message: 'Image uploaded successfully',
-    });
+      },
+      { status: 501 } // Not Implemented
+    );
 
   } catch (error) {
     console.error('Image upload error:', error);
     return NextResponse.json(
       {
-        error: 'Failed to upload image',
+        error: 'Failed to process upload',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
