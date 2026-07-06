@@ -25,7 +25,6 @@ export function WaxSeal({ className, label = "ممتاز" }: { className?: strin
             <stop offset="100%" stopColor="#9A6F23" />
           </radialGradient>
         </defs>
-        {/* Irregular wax seal shape */}
         <path
           d="M32 4 C38 5, 44 3, 48 7 C53 11, 58 14, 59 20 C61 26, 62 31, 59 37 C57 43, 58 49, 53 53 C48 57, 44 61, 37 60 C31 59, 25 62, 19 59 C13 56, 8 52, 6 46 C4 40, 3 34, 5 28 C7 22, 4 16, 9 12 C14 8, 19 4, 25 5 C28 5, 30 4, 32 4 Z"
           fill="url(#wax-grad)"
@@ -33,7 +32,6 @@ export function WaxSeal({ className, label = "ممتاز" }: { className?: strin
           strokeWidth="0.5"
           opacity="0.95"
         />
-        {/* Inner ring */}
         <circle cx="32" cy="32" r="22" fill="none" stroke="#0F1D14" strokeWidth="0.8" opacity="0.3" />
         <circle cx="32" cy="32" r="20" fill="none" stroke="#0F1D14" strokeWidth="0.5" opacity="0.2" />
       </svg>
@@ -46,7 +44,6 @@ export function WaxSeal({ className, label = "ممتاز" }: { className?: strin
 
 /**
  * Hand-drawn-style decorative divider.
- * SVG path with slight imperfection — used sparingly.
  */
 export function HandDrawnDivider({ className }: { className?: string }) {
   return (
@@ -65,7 +62,6 @@ export function HandDrawnDivider({ className }: { className?: string }) {
           strokeLinecap="round"
           fill="none"
         />
-        {/* Small dot accents */}
         <circle cx="3" cy="10" r="1.5" fill="currentColor" />
         <circle cx="177" cy="10" r="1.5" fill="currentColor" />
       </svg>
