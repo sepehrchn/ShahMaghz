@@ -1,6 +1,15 @@
 /**
  * Cloudinary Configuration
  * Server-side image upload and management
+ * 
+ * TO ENABLE CLOUDINARY INTEGRATION:
+ * 1. Install the cloudinary package: npm install cloudinary
+ * 2. Rename this file from cloudinary.ts.example to cloudinary.ts
+ * 3. Set environment variables:
+ *    - CLOUDINARY_CLOUD_NAME
+ *    - CLOUDINARY_API_KEY
+ *    - CLOUDINARY_API_SECRET
+ * 4. Update app/api/admin/upload-image/route.ts to import and use uploadImage function
  */
 
 import { v2 as cloudinary } from 'cloudinary';
