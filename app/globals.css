@@ -1,0 +1,87 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-vazirmatn: "Vazirmatn", sans-serif;
+    --font-dana: "Dana", "Vazirmatn", sans-serif;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-forest-950 text-ivory-100 font-sans antialiased;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Custom scrollbar — dark theme */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-forest-900;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-forest-500 rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gold-400/50;
+  }
+
+  /* Selection color */
+  ::selection {
+    @apply bg-gold-400/30 text-ivory-50;
+  }
+}
+
+@layer components {
+  /* Container with consistent horizontal padding */
+  .container-brand {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Gold text gradient for headings */
+  .text-gold-gradient {
+    @apply bg-clip-text text-transparent bg-gold-shimmer bg-[length:200%_auto];
+    animation: shimmer 3s linear infinite;
+  }
+
+  /* Product card hover reveal */
+  .product-card-reveal {
+    @apply transition-all duration-300;
+  }
+  .product-card-reveal .reveal-content {
+    @apply opacity-0 translate-y-2 transition-all duration-300;
+  }
+  .product-card-reveal:hover .reveal-content {
+    @apply opacity-100 translate-y-0;
+  }
+
+  /* Subtle border glow on focus for dark theme */
+  .focus-glow {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-400/40;
+  }
+}
+
+@layer utilities {
+  /* RTL-aware logical property helpers */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Scroll-triggered reveal animation */
+  .reveal-on-scroll {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  }
+  .reveal-on-scroll.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
