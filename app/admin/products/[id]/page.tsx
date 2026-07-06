@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, use } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Save, Package, AlertCircle } from "lucide-react";
 import { useProductStore } from "@/lib/product-store";
@@ -9,8 +9,8 @@ import { Button } from "@/components/ui/Button";
 import { formatPrice, toPersianDigits } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
-export default function AdminProductEditPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
+export default function AdminProductEditPage({ params }: { params: { id: string } }) {
+  const { id } = params;
   const { getProductById, updateProduct, updateVariantStock } = useProductStore();
   const product = getProductById(id);
 

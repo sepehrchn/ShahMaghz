@@ -1,11 +1,12 @@
-"use client";
+import type { Metadata } from "next";
+import { AdminLogin } from "@/components/admin/AdminLogin";
 
-import { useAdminStore } from "@/lib/admin-store";
+export const metadata: Metadata = {
+  title: "ورود به پنل مدیریت — شاه‌مغز",
+  description: "پنل مدیریت شاه‌مغز",
+  robots: { index: false, follow: false },
+};
 
 export default function AdminLoginPage() {
-  const { isAuthenticated } = useAdminStore();
-
-  // If already authenticated, the AdminLogin component will still render.
-  // The layout handles redirect logic.
-  return null;
+  return <AdminLogin />;
 }

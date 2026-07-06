@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, use } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Package, MapPin, Clock, Truck, CheckCircle, XCircle, Save } from "lucide-react";
 import { useOrderStore, type OrderStatus } from "@/lib/order-store";
@@ -16,8 +16,8 @@ const statusOptions: { value: OrderStatus; label: string; icon: typeof Clock }[]
   { value: "CANCELLED", label: "لغو شده", icon: XCircle },
 ];
 
-export default function AdminOrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
+export default function AdminOrderDetailPage({ params }: { params: { id: string } }) {
+  const { id } = params;
   const { orders, cancelOrder } = useOrderStore();
   const order = orders.find((o) => o.id === id);
   const [saved, setSaved] = useState(false);
