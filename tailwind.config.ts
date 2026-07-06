@@ -8,7 +8,6 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Brand palette — deep forest green / near-black
         forest: {
           950: "#0A140C",
           900: "#0F1D14",
@@ -18,7 +17,6 @@ const config: Config = {
           500: "#2D4130",
           400: "#3A5239",
         },
-        // Gold / bronze accent
         gold: {
           50: "#FBF6E8",
           100: "#F5EBC8",
@@ -28,7 +26,6 @@ const config: Config = {
           500: "#B8862E",
           600: "#9A6F23",
         },
-        // Warm ivory / cream text
         ivory: {
           50: "#FAF7F0",
           100: "#F5EFE0",
@@ -36,7 +33,6 @@ const config: Config = {
           300: "#DDD2B8",
           400: "#C9BC9A",
         },
-        // Deep burgundy accent (used sparingly)
         burgundy: {
           700: "#6E1423",
           800: "#5A1019",
