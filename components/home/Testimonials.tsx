@@ -21,7 +21,7 @@ const testimonials = [
     name: "مریم حسینی",
     city: "شیراز",
     rating: 4,
-    text: "جعبه هدیه سلطنتی برای شب یلدا خریدم. هم محتویات عالی بود هم جعبه چوبی خیلی زیبا. ارسال هم سریع بود. حتماً برای عید هم سفارش می‌دم.",
+    text: "جعبه هدیه سلطنتی برای شب یلدا خریدم. هم محتویات عالی بود هم جع٨ه چوبی خیلی زیبا. ارسال هم سریع بود. حتماً برای عید هم سفارش می‌دم.",
     product: "جعبه هدیه سلطنتی",
   },
 ];
@@ -45,10 +45,10 @@ export function Testimonials() {
               key={i}
               className={`reveal-on-scroll ${
                 i === 0
-                  ? "lg:col-span-5"
-                  : i === 1
-                  ? "lg:col-span-4"
-                  : "lg:col-span-3"
+                   ? "lg:col-span-5"
+                   : i === 1
+                   ? "lg:col-span-4"
+                   : "lg:col-span-3"
               }`}
             >
               <div className="h-full bg-forest-800/60 border border-forest-600/30 rounded-2xl p-6 flex flex-col gap-4 hover:border-gold-400/20 transition-all duration-300">
@@ -62,10 +62,10 @@ export function Testimonials() {
                       key={star}
                       size={14}
                       className={
-                        star <= t.rating
-                          ? "fill-gold-400 text-gold-400"
-                          : "text-forest-500"
-                      }
+                         star <= t.rating
+                           ? "fill-gold-400 text-gold-400"
+                           : "text-forest-500"
+                       }
                     />
                   ))}
                 </div>
@@ -91,5 +91,5 @@ export function Testimonials() {
         </div>
       </div>
     </section>
-  );
+   );
 }

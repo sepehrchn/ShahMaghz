@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ShoppingBag, Check, Minus, Plus, Star, Leaf, Award, Package } from "lucide-react";
+import { ShoppingBag, Check, Minus, Plus, Star, Leaf, Award, Package, MapPin } from "lucide-react";
 import { type MockProduct } from "@/lib/mock-data";
 import { useCartStore } from "@/lib/cart-store";
 import { formatPrice, formatWeight, toPersianDigits } from "@/lib/format";
