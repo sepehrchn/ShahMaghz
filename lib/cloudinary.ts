@@ -1,11 +1,15 @@
 import { v2 as cloudinary } from "cloudinary";
 
-// Configure Cloudinary
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+// Configure Cloudinary only if environment variables are present
+if (process.env.CLOUDINARY_CLOUD_NAME && 
+    process.env.CLOUDINARY_API_KEY && 
+    process.env.CLOUDINARY_API_SECRET) {
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+  });
+}
 
 export interface UploadResult {
   url: string;
@@ -25,6 +29,10 @@ export async function uploadImage(
   file: string,
   folder: string = "product-images"
 ): Promise<UploadResult> {
+  if (!process.env.CLOUDINARY_CLOUD_NAME) {
+    throw new Error("Cloudinary is not configured. Please set CLOUDINARY environment variables.");
+  }
+  
   try {
     const result = await cloudinary.uploader.upload(file, {
       folder,
