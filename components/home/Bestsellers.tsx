@@ -115,13 +115,23 @@ function ProductCard({
       {/* Image area */}
       <Link href={`/product/${product.slug}`} className="block relative">
         <div className="aspect-square bg-gradient-to-br from-forest-700 to-forest-900 relative overflow-hidden">
-          {/* TODO: replace placeholder image */}
-          <div className="absolute inset-0 bg-linen-texture opacity-20" />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-16 h-16 rounded-full bg-gold-400/10 border border-gold-400/20 flex items-center justify-center">
-              <ShoppingBag size={24} className="text-gold-400/40" />
-            </div>
-          </div>
+          {/* Product image or fallback */}
+          {product.images && product.images.length > 0 && product.images[0] ? (
+            <img
+              src={product.images[0]}
+              alt={product.name}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <>
+              <div className="absolute inset-0 bg-linen-texture opacity-20" />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-16 h-16 rounded-full bg-gold-400/10 border border-gold-400/20 flex items-center justify-center">
+                  <ShoppingBag size={24} className="text-gold-400/40" />
+                </div>
+              </div>
+            </>
+          )}
 
           {/* Premium wax seal */}
           {product.isPremium && (

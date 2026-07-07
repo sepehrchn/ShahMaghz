@@ -73,6 +73,9 @@ export const useCartStore = create<CartState>()(
           0
         ),
     }),
-    { name: "shahmaghz-cart" }
+    { 
+      name: "shahmaghz-cart",
+      partialize: (state) => ({ items: state.items }), // Only persist items, not isOpen
+    }
   )
 );

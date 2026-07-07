@@ -76,10 +76,17 @@ export function CartDrawer() {
                   key={item.variantId}
                   className="flex gap-3 bg-forest-800/60 rounded-xl p-3 border border-forest-600/30"
                 >
-                  {/* Placeholder image */}
-                  <div className="w-16 h-16 rounded-lg bg-forest-700/60 border border-forest-500/30 shrink-0 flex items-center justify-center">
-                    {/* TODO: replace placeholder image */}
-                    <ShoppingBag size={20} className="text-ivory-400/40" />
+                  {/* Product image */}
+                  <div className="w-16 h-16 rounded-lg bg-forest-700/60 border border-forest-500/30 shrink-0 overflow-hidden flex items-center justify-center">
+                    {item.image ? (
+                      <img 
+                        src={item.image} 
+                        alt={item.productName}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <ShoppingBag size={20} className="text-ivory-400/40" />
+                    )}
                   </div>
 
                   <div className="flex-1 min-w-0">
