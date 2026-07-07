@@ -1,20 +1,45 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ShoppingBag, Star, Plus } from "lucide-react";
-import { getFeaturedProducts, type MockProduct } from "@/lib/mock-data";
 import { useCartStore } from "@/lib/cart-store";
 import { formatPrice, toPersianDigits } from "@/lib/format";
 import { Badge } from "@/components/ui/Badge";
 import { WaxSeal } from "@/components/ui/BrandMotifs";
 import { cn } from "@/lib/utils";
 
+interface Product {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  images: string[];
+  origin: string;
+  rating: number;
+  reviewCount: number;
+  isPremium: boolean;
+  product_variants: Array<{
+    id: string;
+    packageLabel: string;
+    price: number;
+    compareAtPrice: number | null;
+  }>;
+}
+
 export function Bestsellers() {
-  const featured = getFeaturedProducts().slice(0, 6);
+  const [featured, setFeatured] = useState<Product[]>([]);
   const addItem = useCartStore((s) => s.addItem);
 
-  const handleQuickAdd = (product: MockProduct) => {
-    const variant = product.variants[0];
+  useEffect(() => {
+    fetch('/api/products?featured=true')
+      .then(res => res.json())
+      .then(data => setFeatured(data.slice(0, 6)))
+      .catch(err => console.error('Error fetching products:', err));
+  }, []);
+
+  const handleQuickAdd = (product: Product) => {
+    const variant = product.product_variants[0];
     addItem({
       productId: product.id,
       productSlug: product.slug,
@@ -63,11 +88,11 @@ function ProductCard({
   product,
   onQuickAdd,
 }: {
-  product: MockProduct;
+  product: Product;
   onQuickAdd: () => void;
 }) {
-  const minPrice = Math.min(...product.variants.map((v) => v.price));
-  const hasDiscount = product.variants.some((v) => v.compareAtPrice);
+  const minPrice = Math.min(...product.product_variants.map((v) => v.price));
+  const hasDiscount = product.product_variants.some((v) => v.compareAtPrice);
 
   return (
     <article
@@ -154,7 +179,7 @@ function ProductCard({
               {formatPrice(minPrice)}
             </span>
             <span className="text-xs text-ivory-400">
-              از {toPersianDigits(product.variants.length)} بسته‌بندی
+              از {toPersianDigits(product.product_variants.length)} بسته‌بندی
             </span>
           </div>
 

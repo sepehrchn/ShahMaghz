@@ -109,9 +109,12 @@ export function OrderDetail({ orderId }: OrderDetailProps) {
               key={i}
               className="flex items-center gap-4 pb-4 border-b border-forest-600/20 last:border-0 last:pb-0"
             >
-              {/* TODO: replace placeholder image */}
-              <div className="w-14 h-14 rounded-xl bg-forest-700/60 border border-forest-500/30 flex items-center justify-center shrink-0">
-                <Package size={18} className="text-ivory-400/40" />
+              <div className="w-14 h-14 rounded-xl bg-forest-700/60 border border-forest-500/30 overflow-hidden shrink-0">
+                <img
+                  src={item.image}
+                  alt={item.productName}
+                  className="w-full h-full object-cover"
+                />
               </div>
               <div className="flex-1 min-w-0">
                 <Link

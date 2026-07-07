@@ -39,7 +39,42 @@ npm start
 
 پروژه در `http://localhost:3000` اجرا می‌شود.
 
-> **بدون نیاز به پایگاه داده:** پروژه با داده‌های client-side (Zustand + localStorage) کار می‌کند و بدون هیچ تنظیمات اضافی اجرا می‌شود. برای اتصال به PostgreSQL واقعی، متغیر `DATABASE_URL` را تنظیم کنید.
+## راه‌اندازی پایگاه داده و ذخیره‌سازی تصاویر
+
+### 1. Neon PostgreSQL (پایگاه داده)
+
+پروژه از Neon Tech به عنوان پایگاه داده PostgreSQL serverless استفاده می‌کند:
+
+```bash
+# 1. در neon.tech ثبت‌نام کنید و پروژه جدید بسازید
+# 2. Connection strings را از داشبورد کپی کنید
+# 3. در فایل .env متغیرهای زیر را تنظیم کنید:
+
+DATABASE_URL="postgresql://user:password@ep-xxx-pooler.neon.tech/neondb?sslmode=require"
+DIRECT_URL="postgresql://user:password@ep-xxx.neon.tech/neondb?sslmode=require"
+
+# 4. ساخت جداول در پایگاه داده
+npx prisma db push
+
+# 5. پر کردن پایگاه داده با داده‌های اولیه
+npm run seed
+```
+
+### 2. Cloudinary (ذخیره‌سازی تصاویر)
+
+تمام تصاویر محصولات در Cloudinary ذخیره می‌شوند:
+
+```bash
+# 1. در cloudinary.com ثبت‌نام کنید
+# 2. از داشبورد، مقادیر زیر را کپی کنید
+# 3. در فایل .env تنظیم کنید:
+
+CLOUDINARY_CLOUD_NAME="your-cloud-name"
+CLOUDINARY_API_KEY="your-api-key"
+CLOUDINARY_API_SECRET="your-api-secret"
+```
+
+تصاویر محصولات از پوشه `product-images` در Cloudinary بارگذاری می‌شوند.
 
 ---
 
@@ -71,14 +106,49 @@ vercel --prod
 پروژه **بدون نیاز به متغیرهای محیط** کار می‌کند. برای اتصال به سرویس‌های واقعی، متغیرهای زیر را در Vercel تنظیم کنید:
 
 ```
-DATABASE_URL=postgresql://...        # اتصال PostgreSQL + Prisma
-NEXTAUTH_SECRET=...                  # احراز هویت واقعی
+# پایگاه داده (Neon PostgreSQL)
+DATABASE_URL=postgresql://...        # اتصال Pooled
+DIRECT_URL=postgresql://...          # اتصال مستقیم
+
+# ذخیره‌سازی تصاویر (Cloudinary)
+CLOUDINARY_CLOUD_NAME=...           # نام Cloud
+CLOUDINARY_API_KEY=...              # کلید API
+CLOUDINARY_API_SECRET=...           # Secret Key
+
+# احراز هویت
+NEXTAUTH_SECRET=...                  # کلید امنیتی NextAuth
 NEXTAUTH_URL=https://your-domain.vercel.app
+
+# پرداخت و پیامک (اختیاری)
 ZARINPAL_MERCHANT_ID=...             # درگاه پرداخت (در صورت فعال‌سازی)
 KAVENEGAR_API_KEY=...                # ارسال پیامک (در صورت فعال‌سازی)
 ```
 
 فایل `vercel.json` شامل تنظیمات امنیتی (Security Headers) و منطقه استقرار (Singapore) است.
+
+---
+
+## API Routes
+
+پروژه از Next.js API Routes برای ارتباط با پایگاه داده Neon استفاده می‌کند:
+
+### محصولات (Products)
+- `GET /api/products` - دریافت لیست محصولات (پارامترها: `categoryId`, `featured`)
+- `POST /api/products` - ایجاد محصول جدید
+- `GET /api/products/[id]` - دریافت جزئیات یک محصول
+- `PUT /api/products/[id]` - ویرایش محصول
+- `DELETE /api/products/[id]` - حذف محصول
+
+### دسته‌بندی‌ها (Categories)
+- `GET /api/categories` - دریافت لیست دسته‌بندی‌ها با تعداد محصولات
+
+### سفارش‌ها (Orders)
+- `GET /api/orders` - دریافت لیست سفارش‌ها (پارامترها: `userId`, `status`)
+- `POST /api/orders` - ایجاد سفارش جدید
+- `GET /api/orders/[id]` - دریافت جزئیات یک سفارش
+- `PUT /api/orders/[id]` - ویرایش وضعیت سفارش
+
+**نکته:** تمام API routes از Prisma ORM برای تعامل با Neon PostgreSQL استفاده می‌کنند و تصاویر از Cloudinary بارگذاری می‌شوند.
 
 ---
 

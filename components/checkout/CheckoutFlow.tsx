@@ -305,7 +305,7 @@ export function CheckoutFlow() {
                     value={formData.recipient}
                     onChange={(e) => handleChange("recipient", e.target.value)}
                     error={errors.recipient}
-                    placeholder="نام و نام خانوادگی"
+                    placeholder="مثلاً: علی رضایی"
                   />
                   <Input
                     label="شماره موبایل"
@@ -314,7 +314,7 @@ export function CheckoutFlow() {
                     value={formData.mobile}
                     onChange={(e) => handleChange("mobile", e.target.value)}
                     error={errors.mobile}
-                    placeholder="۰۹۱۲۳۴۵۶۷۸۹"
+                    placeholder="مثلاً: ۰۹۱۲۳۴۵۶۷۸۹"
                   />
                 </div>
 
@@ -344,7 +344,7 @@ export function CheckoutFlow() {
                     value={formData.city}
                     onChange={(e) => handleChange("city", e.target.value)}
                     error={errors.city}
-                    placeholder="نام شهر"
+                    placeholder="مثلاً: تهران"
                   />
                 </div>
 
@@ -354,7 +354,7 @@ export function CheckoutFlow() {
                   value={formData.postalCode}
                   onChange={(e) => handleChange("postalCode", e.target.value)}
                   error={errors.postalCode}
-                  placeholder="کد پستی ۱۰ رقمی"
+                  placeholder="مثلاً: ۱۲۳۴۵۶۷۸۹۰"
                 />
 
                 <Textarea
@@ -364,7 +364,7 @@ export function CheckoutFlow() {
                   value={formData.addressLine}
                   onChange={(e) => handleChange("addressLine", e.target.value)}
                   error={errors.addressLine}
-                  placeholder="خیابان، کوچه، پلاک و جزئیات"
+                  placeholder="مثلاً: خیابان ولیعصر، کوچه شماره ۱۲، پلاک ۵، واحد ۳"
                 />
 
                 <Textarea
@@ -374,7 +374,7 @@ export function CheckoutFlow() {
                   value={formData.customerNote}
                   onChange={(e) => handleChange("customerNote", e.target.value)}
                   error={errors.customerNote}
-                  placeholder="هر نکته‌ای که برای ارسال باید بدانیم..."
+                  placeholder="مثلاً: لطفاً در ساعات عصر تماس بگیرید"
                 />
               </div>
             )}

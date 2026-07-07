@@ -1,10 +1,28 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { categories } from "@/lib/mock-data";
 import { HandDrawnDivider } from "@/components/ui/BrandMotifs";
 import { toPersianDigits } from "@/lib/format";
 
+interface Category {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  productCount: number;
+}
+
 export function CategoryShowcase() {
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  useEffect(() => {
+    fetch('/api/categories')
+      .then(res => res.json())
+      .then(data => setCategories(data))
+      .catch(err => console.error('Error fetching categories:', err));
+  }, []);
   return (
     <section className="py-16 lg:py-20 bg-forest-900 bg-kraft-texture">
       <div className="container-brand">

@@ -67,7 +67,7 @@ export function AddressForm({ initialData, onSubmit, onCancel }: AddressFormProp
           value={formData.label}
           onChange={(e) => handleChange("label", e.target.value)}
           error={errors.label}
-          placeholder="خانه، محل کار و ..."
+          placeholder="مثلاً: خانه، محل کار"
         />
         <Input
           label="نام گیرنده"
@@ -75,7 +75,7 @@ export function AddressForm({ initialData, onSubmit, onCancel }: AddressFormProp
           value={formData.recipient}
           onChange={(e) => handleChange("recipient", e.target.value)}
           error={errors.recipient}
-          placeholder="نام و نام خانوادگی گیرنده"
+          placeholder="مثلاً: علی رضایی"
         />
       </div>
 
@@ -87,7 +87,7 @@ export function AddressForm({ initialData, onSubmit, onCancel }: AddressFormProp
           value={formData.mobile}
           onChange={(e) => handleChange("mobile", e.target.value)}
           error={errors.mobile}
-          placeholder="۰۹۱۲۳۴۵۶۷۸۹"
+          placeholder="مثلاً: ۰۹۱۲۳۴۵۶۷۸۹"
         />
         <div className="flex flex-col gap-1.5">
           <label className="text-sm font-medium text-ivory-200">استان</label>
@@ -116,7 +116,7 @@ export function AddressForm({ initialData, onSubmit, onCancel }: AddressFormProp
           value={formData.city}
           onChange={(e) => handleChange("city", e.target.value)}
           error={errors.city}
-          placeholder="نام شهر"
+          placeholder="مثلاً: تهران"
         />
         <Input
           label="کد پستی"
@@ -124,7 +124,7 @@ export function AddressForm({ initialData, onSubmit, onCancel }: AddressFormProp
           value={formData.postalCode}
           onChange={(e) => handleChange("postalCode", e.target.value)}
           error={errors.postalCode}
-          placeholder="کد پستی ۱۰ رقمی"
+          placeholder="مثلاً: ۱۲۳۴۵۶۷۸۹۰"
         />
       </div>
 
@@ -135,7 +135,7 @@ export function AddressForm({ initialData, onSubmit, onCancel }: AddressFormProp
         value={formData.addressLine}
         onChange={(e) => handleChange("addressLine", e.target.value)}
         error={errors.addressLine}
-        placeholder="خیابان، کوچه، پلاک و جزئیات آدرس"
+        placeholder="مثلاً: خیابان ولیعصر، کوچه شماره ۱۲، پلاک ۵، واحد ۳"
       />
 
       <div className="flex gap-3 mt-2">

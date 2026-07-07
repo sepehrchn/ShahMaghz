@@ -79,7 +79,7 @@ export function LoginForm() {
             value={formData.firstName}
             onChange={(e) => handleChange("firstName", e.target.value)}
             error={errors.firstName}
-            placeholder="نام شما"
+            placeholder="مثلاً: علی"
           />
           <Input
             label="نام خانوادگی"
@@ -87,7 +87,7 @@ export function LoginForm() {
             value={formData.lastName}
             onChange={(e) => handleChange("lastName", e.target.value)}
             error={errors.lastName}
-            placeholder="نام خانوادگی"
+            placeholder="مثلاً: رضایی"
           />
         </div>
 
@@ -98,7 +98,7 @@ export function LoginForm() {
           value={formData.mobile}
           onChange={(e) => handleChange("mobile", e.target.value)}
           error={errors.mobile}
-          placeholder="۰۹۱۲۳۴۵۶۷۸۹"
+          placeholder="مثلاً: ۰۹۱۲۳۴۵۶۷۸۹"
           hint="شماره موبایل خود را بدون کد کشور وارد کنید"
         />
 
@@ -109,7 +109,7 @@ export function LoginForm() {
           value={formData.email}
           onChange={(e) => handleChange("email", e.target.value)}
           error={errors.email}
-          placeholder="example@email.com"
+          placeholder="مثلاً: ali.rezaei@example.com"
         />
 
         <Button type="submit" size="lg" fullWidth disabled={isSubmitting}>

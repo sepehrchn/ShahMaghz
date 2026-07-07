@@ -76,13 +76,16 @@ export function OrderList() {
                   {/* Items summary */}
                   <div className="flex items-center gap-2 mt-1">
                     <div className="flex -space-x-2">
-                      {/* TODO: replace placeholder with product images */}
                       {order.items.slice(0, 3).map((item, i) => (
                         <div
                           key={i}
-                          className="w-8 h-8 rounded-lg bg-forest-700/60 border border-forest-500/30 flex items-center justify-center"
+                          className="w-8 h-8 rounded-lg bg-forest-700/60 border border-forest-500/30 overflow-hidden"
                         >
-                          <Package size={12} className="text-ivory-400/50" />
+                          <img
+                            src={item.image}
+                            alt={item.productName}
+                            className="w-full h-full object-cover"
+                          />
                         </div>
                       ))}
                     </div>

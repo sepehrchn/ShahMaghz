@@ -13,6 +13,7 @@ export interface OrderItem {
   quantity: number;
   unitPrice: number;
   totalPrice: number;
+  image: string;
 }
 
 export interface ShippingInfo {
@@ -82,6 +83,7 @@ export const useOrderStore = create<OrderState>()(
             quantity: item.quantity,
             unitPrice: item.price,
             totalPrice: item.price * item.quantity,
+            image: item.image,
           })),
           shippingInfo: data.shippingInfo,
           subtotal,
