@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { X, Plus, Minus, ShoppingBag, Trash2 } from "lucide-react";
 import { useCartStore } from "@/lib/cart-store";
@@ -13,6 +14,35 @@ export function CartDrawer() {
 
   const subtotal = getSubtotal();
 
+  // Force cart closed on initial mount to prevent it opening on page load
+  useEffect(() => {
+    closeCart();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Lock body scroll when the cart is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
+
+  // Close the cart on the Escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isOpen) {
+        closeCart();
+      }
+    };
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, [isOpen, closeCart]);
+
   return (
     <>
       {/* Overlay */}
@@ -22,6 +52,7 @@ export function CartDrawer() {
           isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         )}
         onClick={closeCart}
+        aria-hidden={!isOpen}
       />
 
       {/* Drawer — slides from left (RTL: visually from right edge) */}
@@ -31,6 +62,9 @@ export function CartDrawer() {
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
         dir="rtl"
+        role="dialog"
+        aria-modal="true"
+        aria-label="سبد خرید"
       >
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-forest-600/40">
@@ -79,8 +113,8 @@ export function CartDrawer() {
                   {/* Product image */}
                   <div className="w-16 h-16 rounded-lg bg-forest-700/60 border border-forest-500/30 shrink-0 overflow-hidden flex items-center justify-center">
                     {item.image ? (
-                      <img 
-                        src={item.image} 
+                      <img
+                        src={item.image}
                         alt={item.productName}
                         className="w-full h-full object-cover"
                       />
