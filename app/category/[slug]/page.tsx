@@ -1,19 +1,23 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ProductGrid } from "@/components/product/ProductGrid";
-import { categories as mockCategories, getProductsByCategory as getMockProducts } from "@/lib/mock-data";
+import { prisma, getDbCategoryBySlug, getDbProductsByCategory } from "@/lib/prisma";
 
 interface PageProps {
   params: { slug: string };
 }
 
 export async function generateStaticParams() {
-  // Use mock data for static generation
-  return mockCategories.map((c) => ({ slug: c.slug }));
+  try {
+    const categories = await prisma.categories.findMany();
+    return categories.map((c) => ({ slug: c.slug }));
+  } catch {
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const category = mockCategories.find((c) => c.slug === params.slug);
+  const category = await getDbCategoryBySlug(params.slug);
   
   if (!category) return { title: "دسته‌بندی یافت نشد" };
 
@@ -24,13 +28,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function CategoryPage({ params }: PageProps) {
-  const category = mockCategories.find((c) => c.slug === params.slug);
+  const category = await getDbCategoryBySlug(params.slug);
   
   if (!category) notFound();
 
-  // At runtime, this will fetch from database via API
-  // During build, use mock data for static generation
-  const products = getMockProducts(params.slug);
+  const products = await getDbProductsByCategory(params.slug);
 
   return (
     <div className="bg-forest-950 min-h-screen">

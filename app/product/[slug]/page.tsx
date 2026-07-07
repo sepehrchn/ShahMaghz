@@ -1,21 +1,25 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ChevronLeft, ShoppingBag, Star, MapPin, Shield, Truck } from "lucide-react";
+import { ChevronLeft, Shield, MapPin, Truck } from "lucide-react";
 import { ProductDetailClient } from "@/components/product/ProductDetailClient";
-import { products as mockProducts, getProductBySlug } from "@/lib/mock-data";
+import { prisma, getDbProductBySlug } from "@/lib/prisma";
 
 interface PageProps {
   params: { slug: string };
 }
 
 export async function generateStaticParams() {
-  // Use mock data for static generation
-  return mockProducts.map((p) => ({ slug: p.slug }));
+  try {
+    const products = await prisma.products.findMany();
+    return products.map((p) => ({ slug: p.slug }));
+  } catch {
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const product = getProductBySlug(params.slug);
+  const product = await getDbProductBySlug(params.slug);
   
   if (!product) return { title: "محصول یافت نشد" };
 
@@ -56,7 +60,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function ProductDetailPage({ params }: PageProps) {
-  const product = getProductBySlug(params.slug);
+  const product = await getDbProductBySlug(params.slug);
   
   if (!product) notFound();
 

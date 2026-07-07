@@ -85,3 +85,30 @@
     transform: translateY(0);
   }
 }
+
+/* Fallback styles for article content when typography plugin is not used */
+.prose h1, .prose h2, .prose h3, .prose h4 {
+  @apply text-ivory-50 font-display font-bold mt-8 mb-4;
+}
+.prose h1 { @apply text-3xl; }
+.prose h2 { @apply text-2xl; }
+.prose h3 { @apply text-xl; }
+.prose p {
+  @apply text-ivory-200 leading-relaxed mb-4;
+}
+.prose ul {
+  @apply list-disc list-inside mb-4 text-ivory-200;
+}
+.prose ol {
+  @apply list-decimal list-inside mb-4 text-ivory-200;
+}
+.prose li {
+  @apply mb-1;
+}
+.prose strong {
+  @apply text-ivory-50 font-bold;
+}
+.prose a {
+  @apply text-gold-400 hover:text-gold-200 underline transition-colors;
+}
+

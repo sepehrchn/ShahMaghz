@@ -7,7 +7,7 @@ import { useOrderStore, type OrderStatus } from "@/lib/order-store";
 import { formatPrice, formatPersianDateTime, toPersianDigits } from "@/lib/format";
 import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
 const statusConfig: Record<OrderStatus, { label: string; icon: typeof Clock; color: string; bgColor: string }> = {
@@ -24,10 +24,79 @@ interface OrderDetailProps {
 
 export function OrderDetail({ orderId }: OrderDetailProps) {
   const router = useRouter();
-  const { getOrderById, cancelOrder } = useOrderStore();
+  const { cancelOrder } = useOrderStore();
+  const [order, setOrder] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
 
-  const order = getOrderById(orderId);
+  const fetchOrder = () => {
+    fetch(`/api/orders/${orderId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && !data.error) {
+          const mapped = {
+            id: data.id,
+            orderNumber: data.orderNumber,
+            status: data.status,
+            createdAt: data.createdAt,
+            subtotal: data.subtotal,
+            shippingCost: data.shippingCost,
+            discountAmount: data.discountAmount,
+            totalAmount: data.totalAmount,
+            customerNote: data.customerNote,
+            shippingInfo: data.shippingAddress as any,
+            items: data.order_items.map((item: any) => ({
+              productId: item.productId,
+              productSlug: item.products?.slug || "",
+              productName: item.productName,
+              variantLabel: item.variantLabel,
+              quantity: item.quantity,
+              unitPrice: item.unitPrice,
+              totalPrice: item.totalPrice,
+              image: item.products?.images?.[0] || "",
+            })),
+          };
+          setOrder(mapped);
+        }
+      })
+      .catch((err) => console.error(err))
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchOrder();
+  }, [orderId]);
+
+  const handleCancel = async () => {
+    try {
+      const res = await fetch(`/api/orders/${orderId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "CANCELLED" }),
+      });
+
+      if (!res.ok) {
+        throw new Error("لغو سفارش با خطا مواجه شد");
+      }
+
+      await res.json();
+      cancelOrder(orderId);
+      fetchOrder();
+      setShowCancelConfirm(false);
+    } catch (err) {
+      console.error(err);
+      alert("خطایی در لغو سفارش رخ داد.");
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-gold-400 border-r-2 border-r-transparent"></div>
+        <span className="mr-3 text-ivory-300">در حال دریافت جزئیات سفارش...</span>
+      </div>
+    );
+  }
 
   if (!order) {
     return (
@@ -46,14 +115,9 @@ export function OrderDetail({ orderId }: OrderDetailProps) {
     );
   }
 
-  const status = statusConfig[order.status];
+  const status = statusConfig[order.status as OrderStatus];
   const StatusIcon = status.icon;
   const canCancel = order.status === "PENDING" || order.status === "PROCESSING";
-
-  const handleCancel = () => {
-    cancelOrder(order.id);
-    setShowCancelConfirm(false);
-  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -104,7 +168,7 @@ export function OrderDetail({ orderId }: OrderDetailProps) {
           اقلام سفارش
         </h3>
         <div className="flex flex-col gap-4">
-          {order.items.map((item, i) => (
+          {order.items.map((item: any, i: number) => (
             <div
               key={i}
               className="flex items-center gap-4 pb-4 border-b border-forest-600/20 last:border-0 last:pb-0"

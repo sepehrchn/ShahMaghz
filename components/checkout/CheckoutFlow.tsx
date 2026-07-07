@@ -31,6 +31,7 @@ export function CheckoutFlow() {
   const { createOrder } = useOrderStore();
 
   const [step, setStep] = useState<Step>("shipping");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [completedOrder, setCompletedOrder] = useState<{ orderNumber: string; totalAmount: number } | null>(null);
   const [useSavedAddress, setUseSavedAddress] = useState<boolean>(getDefault() != null);
@@ -118,28 +119,62 @@ export function CheckoutFlow() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handlePlaceOrder = () => {
-    const shippingInfo: ShippingInfo = {
-      recipient: formData.recipient,
-      mobile: formData.mobile,
-      province: formData.province,
-      city: formData.city,
-      postalCode: formData.postalCode,
-      addressLine: formData.addressLine,
-    };
+  const handlePlaceOrder = async () => {
+    setIsSubmitting(true);
+    try {
+      const orderData = {
+        userId: user?.id || null,
+        guestMobile: !isAuthenticated ? formData.mobile : null,
+        guestName: !isAuthenticated ? formData.recipient : null,
+        items: items.map((item) => ({
+          productId: item.productId,
+          variantId: item.variantId,
+          quantity: item.quantity,
+          price: item.price,
+          productName: item.productName,
+          variantLabel: item.variantLabel,
+        })),
+        shippingInfo: {
+          recipient: formData.recipient,
+          mobile: formData.mobile,
+          province: formData.province,
+          city: formData.city,
+          postalCode: formData.postalCode,
+          addressLine: formData.addressLine,
+        },
+        subtotal,
+        shippingCost,
+        discountAmount: 0,
+        customerNote: formData.customerNote || undefined,
+      };
 
-    const order = createOrder({
-      items,
-      shippingInfo,
-      shippingCost,
-      discountAmount: 0,
-      customerNote: formData.customerNote || undefined,
-    });
+      const res = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(orderData),
+      });
 
-    setCompletedOrder({ orderNumber: order.orderNumber, totalAmount: order.totalAmount });
-    clearCart();
-    setStep("confirmation");
-    window.scrollTo({ top: 0, behavior: "smooth" });
+      if (!res.ok) {
+        throw new Error("سفارش ثبت نشد");
+      }
+
+      const dbOrder = await res.json();
+
+      // Add to clientside store for local cache / history
+      useOrderStore.setState((state) => ({
+        orders: [dbOrder, ...state.orders],
+      }));
+
+      setCompletedOrder({ orderNumber: dbOrder.orderNumber, totalAmount: dbOrder.totalAmount });
+      clearCart();
+      setStep("confirmation");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (err) {
+      console.error(err);
+      alert("خطایی در ثبت سفارش رخ داد. لطفاً دوباره تلاش کنید.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // ─── Step: Confirmation ─────────────────────────────
@@ -451,9 +486,15 @@ export function CheckoutFlow() {
               <Button variant="ghost" size="lg" onClick={() => setStep("shipping")}>
                 بازگشت
               </Button>
-              <Button size="lg" fullWidth onClick={handlePlaceOrder} className="gap-2">
+              <Button
+                size="lg"
+                fullWidth
+                onClick={handlePlaceOrder}
+                disabled={isSubmitting}
+                className="gap-2"
+              >
                 <Check size={20} />
-                ثبت نهایی سفارش
+                {isSubmitting ? "در حال ثبت سفارش..." : "ثبت نهایی سفارش"}
               </Button>
             </div>
           </div>

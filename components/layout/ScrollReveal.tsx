@@ -18,14 +18,34 @@ export function ScrollReveal() {
           }
         });
       },
-      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
+      { threshold: 0.05, rootMargin: "50px 0px 0px 0px" }
     );
 
-    const elements = document.querySelectorAll(".reveal-on-scroll");
-    elements.forEach((el) => observer.observe(el));
+    function observeAll() {
+      const elements = document.querySelectorAll(
+        ".reveal-on-scroll:not(.is-visible)"
+      );
+      elements.forEach((el) => observer.observe(el));
+    }
 
-    return () => observer.disconnect();
+    // Initial observation
+    observeAll();
+
+    // Re-observe after dynamic content loads (e.g. async server components)
+    const mutationObserver = new MutationObserver(() => {
+      observeAll();
+    });
+    mutationObserver.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
+
+    return () => {
+      observer.disconnect();
+      mutationObserver.disconnect();
+    };
   }, []);
 
   return null;
 }
+

@@ -2,11 +2,11 @@ import Link from "next/link";
 import { ArrowLeft, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { WaxSeal } from "@/components/ui/BrandMotifs";
-import { getProductBySlug } from "@/lib/mock-data";
+import { getDbProductBySlug } from "@/lib/prisma";
 
-export function Hero() {
-  const heroLarge = getProductBySlug("pistachio-akbari");
-  const heroSmall = getProductBySlug("saffron-threads");
+export async function Hero() {
+  const heroLarge = await getDbProductBySlug("pistachio-akbari");
+  const heroSmall = await getDbProductBySlug("saffron-threads");
 
   return (
     <section className="relative overflow-hidden bg-forest-950">

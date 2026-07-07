@@ -1,8 +1,10 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Package, ChevronLeft, Clock, Truck, CheckCircle, XCircle } from "lucide-react";
-import { useOrderStore, type OrderStatus } from "@/lib/order-store";
+import { useAuthStore } from "@/lib/auth-store";
+import { type OrderStatus } from "@/lib/order-store";
 import { formatPrice, formatPersianDate, toPersianDigits } from "@/lib/format";
 import { Button } from "@/components/ui/Button";
 
@@ -15,7 +17,49 @@ const statusConfig: Record<OrderStatus, { label: string; icon: typeof Clock; col
 };
 
 export function OrderList() {
-  const { orders } = useOrderStore();
+  const { user } = useAuthStore();
+  const [orders, setOrders] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (user?.id) {
+      fetch(`/api/orders?userId=${user.id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (Array.isArray(data)) {
+            const mapped = data.map((order: any) => ({
+              id: order.id,
+              orderNumber: order.orderNumber,
+              status: order.status,
+              createdAt: order.createdAt,
+              totalAmount: order.totalAmount,
+              items: order.order_items.map((item: any) => ({
+                productId: item.productId,
+                productName: item.productName,
+                variantLabel: item.variantLabel,
+                quantity: item.quantity,
+                price: item.unitPrice,
+                image: item.products?.images?.[0] || "",
+              })),
+            }));
+            setOrders(mapped);
+          }
+        })
+        .catch((err) => console.error(err))
+        .finally(() => setLoading(false));
+    } else {
+      setLoading(false);
+    }
+  }, [user?.id]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-gold-400 border-r-2 border-r-transparent"></div>
+        <span className="mr-3 text-ivory-300">در حال دریافت سفارش‌ها...</span>
+      </div>
+    );
+  }
 
   if (orders.length === 0) {
     return (
@@ -46,8 +90,8 @@ export function OrderList() {
       </h2>
 
       <div className="flex flex-col gap-3">
-        {orders.map((order) => {
-          const status = statusConfig[order.status];
+        {orders.map((order: any) => {
+          const status = statusConfig[order.status as OrderStatus];
           const StatusIcon = status.icon;
 
           return (
@@ -76,7 +120,7 @@ export function OrderList() {
                   {/* Items summary */}
                   <div className="flex items-center gap-2 mt-1">
                     <div className="flex -space-x-2">
-                      {order.items.slice(0, 3).map((item, i) => (
+                      {order.items.slice(0, 3).map((item: any, i: number) => (
                         <div
                           key={i}
                           className="w-8 h-8 rounded-lg bg-forest-700/60 border border-forest-500/30 overflow-hidden"
