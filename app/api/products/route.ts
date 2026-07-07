@@ -32,8 +32,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(products);
   } catch (error) {
     console.error("Error fetching products:", error);
+    console.error("Error details:", JSON.stringify(error, null, 2));
     return NextResponse.json(
-      { error: "Failed to fetch products" },
+      { error: "Failed to fetch products", details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }

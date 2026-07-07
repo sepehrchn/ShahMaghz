@@ -76,6 +76,12 @@ export const useCartStore = create<CartState>()(
     { 
       name: "shahmaghz-cart",
       partialize: (state) => ({ items: state.items }), // Only persist items, not isOpen
+      onRehydrateStorage: () => (state) => {
+        // Force isOpen to false after rehydration
+        if (state) {
+          state.isOpen = false;
+        }
+      },
     }
   )
 );

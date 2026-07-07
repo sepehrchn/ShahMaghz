@@ -29,8 +29,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(categoriesWithCount);
   } catch (error) {
     console.error("Error fetching categories:", error);
+    console.error("Error details:", JSON.stringify(error, null, 2));
     return NextResponse.json(
-      { error: "Failed to fetch categories" },
+      { error: "Failed to fetch categories", details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }
