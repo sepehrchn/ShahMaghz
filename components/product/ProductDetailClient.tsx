@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-// MapPin is imported correctly from lucide-react
 import { ShoppingBag, Check, Minus, Plus, Star, Leaf, Award, Package, MapPin } from "lucide-react";
 import { type MockProduct } from "@/lib/mock-data";
 import { useCartStore } from "@/lib/cart-store";
@@ -16,6 +15,7 @@ export function ProductDetailClient({ product }: { product: MockProduct }) {
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<"description" | "nutrition" | "reviews">("description");
   const [added, setAdded] = useState(false);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   const addItem = useCartStore((s) => s.addItem);
 
@@ -46,13 +46,22 @@ export function ProductDetailClient({ product }: { product: MockProduct }) {
         <div className="lg:col-span-6 flex flex-col gap-4">
           {/* Main image */}
           <div className="relative aspect-square rounded-2xl bg-gradient-to-br from-forest-700 to-forest-900 border border-gold-400/20 overflow-hidden">
-            {/* TODO: replace placeholder image */}
-            <div className="absolute inset-0 bg-linen-texture opacity-20" />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-24 h-24 rounded-full bg-gold-400/10 border border-gold-400/20 flex items-center justify-center">
-                <ShoppingBag size={32} className="text-gold-400/40" />
-              </div>
-            </div>
+            {product.images && product.images.length > 0 && product.images[selectedImageIndex] ? (
+              <img
+                src={product.images[selectedImageIndex]}
+                alt={product.name}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <>
+                <div className="absolute inset-0 bg-linen-texture opacity-20" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-24 h-24 rounded-full bg-gold-400/10 border border-gold-400/20 flex items-center justify-center">
+                    <ShoppingBag size={32} className="text-gold-400/40" />
+                  </div>
+                </div>
+              </>
+            )}
 
             {product.isPremium && (
               <div className="absolute top-4 start-4">
@@ -64,13 +73,26 @@ export function ProductDetailClient({ product }: { product: MockProduct }) {
           {/* Thumbnail strip */}
           <div className="flex gap-3">
             {product.images.map((img, i) => (
-              <div
+              <button
                 key={i}
-                className="w-20 h-20 rounded-xl bg-forest-800 border border-forest-600/40 overflow-hidden flex items-center justify-center"
+                onClick={() => setSelectedImageIndex(i)}
+                className={cn(
+                  "w-20 h-20 rounded-xl border overflow-hidden flex items-center justify-center transition-all",
+                  selectedImageIndex === i
+                    ? "border-gold-400 ring-2 ring-gold-400/30"
+                    : "border-forest-600/40 hover:border-gold-400/40"
+                )}
               >
-                {/* TODO: replace placeholder image */}
-                <ShoppingBag size={16} className="text-ivory-400/30" />
-              </div>
+                {img ? (
+                  <img
+                    src={img}
+                    alt={`${product.name} - ${i + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <ShoppingBag size={16} className="text-ivory-400/30" />
+                )}
+              </button>
             ))}
           </div>
         </div>
@@ -311,7 +333,7 @@ export function ProductDetailClient({ product }: { product: MockProduct }) {
                   calories: "کالری",
                   fat: "چربی",
                   protein: "پروتئین",
-                  carbs: "کربوهیدرات",
+                  carbs: "کربوهیدرات‌ها",
                   fiber: "فیبر",
                 };
                 return (

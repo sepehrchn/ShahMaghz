@@ -184,7 +184,7 @@ export function ProductGrid({ products: initialProducts, categoryName }: Product
               <div className="w-20 h-20 rounded-full bg-forest-700/50 flex items-center justify-center mb-4">
                 <ShoppingBag size={32} className="text-ivory-400/40" />
               </div>
-              <p className="text-ivory-300 font-medium">محصولی با این فیلترها یافت نشد</p>
+              <p className="text-ivory-300 font-medium">محصولی با این فیلترها پیدا نشد</p>
               <p className="text-sm text-ivory-400/60 mt-1">فیلترها را تغییر دهید</p>
             </div>
           ) : (
@@ -218,13 +218,23 @@ function ProductCard({
     <article className="product-card-reveal group relative bg-forest-800/60 border border-forest-600/30 rounded-2xl overflow-hidden hover:border-gold-400/30 hover:shadow-xl hover:shadow-forest-950/40 transition-all duration-300">
       <Link href={`/product/${product.slug}`} className="block relative">
         <div className="aspect-square bg-gradient-to-br from-forest-700 to-forest-900 relative overflow-hidden">
-          {/* TODO: replace placeholder image */}
-          <div className="absolute inset-0 bg-linen-texture opacity-20" />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-16 h-16 rounded-full bg-gold-400/10 border border-gold-400/20 flex items-center justify-center">
-              <ShoppingBag size={24} className="text-gold-400/40" />
-            </div>
-          </div>
+          {/* Product image or fallback */}
+          {product.images && product.images.length > 0 && product.images[0] ? (
+            <img
+              src={product.images[0]}
+              alt={product.name}
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+          ) : (
+            <>
+              <div className="absolute inset-0 bg-linen-texture opacity-20" />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-16 h-16 rounded-full bg-gold-400/10 border border-gold-400/20 flex items-center justify-center">
+                  <ShoppingBag size={24} className="text-gold-400/40" />
+                </div>
+              </div>
+            </>
+          )}
 
           {product.isPremium && (
             <div className="absolute top-3 start-3">
