@@ -3,38 +3,19 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft, ShoppingBag, Star, MapPin, Shield, Truck } from "lucide-react";
 import { ProductDetailClient } from "@/components/product/ProductDetailClient";
-import { prisma } from "@/lib/prisma";
+import { products as mockProducts, getProductBySlug } from "@/lib/mock-data";
 
 interface PageProps {
   params: { slug: string };
 }
 
-async function getProducts() {
-  try {
-    const products = await prisma.products.findMany({
-      include: {
-        product_variants: {
-          orderBy: { weightGrams: "asc" },
-        },
-        categories: true,
-      },
-      orderBy: [{ isFeatured: "desc" }, { sortOrder: "asc" }, { createdAt: "desc" }],
-    });
-    return products;
-  } catch (error) {
-    console.error('Error fetching products:', error);
-    return [];
-  }
-}
-
 export async function generateStaticParams() {
-  const products = await getProducts();
-  return products.map((p: any) => ({ slug: p.slug }));
+  // Use mock data for static generation
+  return mockProducts.map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const products = await getProducts();
-  const product = products.find((p: any) => p.slug === params.slug);
+  const product = getProductBySlug(params.slug);
   
   if (!product) return { title: "محصول یافت نشد" };
 
@@ -63,7 +44,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         offers: {
           "@type": "Offer",
           priceCurrency: "IRR",
-          price: Math.min(...product.product_variants.map((v: any) => v.price)),
+          price: Math.min(...product.variants.map((v) => v.price)),
           availability:
             product.stockStatus === "OUT_OF_STOCK"
               ? "https://schema.org/OutOfStock"
@@ -75,21 +56,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function ProductDetailPage({ params }: PageProps) {
-  const products = await getProducts();
-  const product = products.find((p: any) => p.slug === params.slug);
+  const product = getProductBySlug(params.slug);
   
   if (!product) notFound();
-
-  // Transform product_variants to variants for compatibility
-  const transformedProduct: any = {
-    ...product,
-    longDescription: product.longDescription || '',
-    origin: product.origin || '',
-    storageTips: product.storageTips || '',
-    variants: product.product_variants,
-    categoryName: product.categories?.name || '',
-    categorySlug: product.categories?.slug || '',
-  };
 
   return (
     <div className="bg-forest-950 min-h-screen">
@@ -101,17 +70,17 @@ export default async function ProductDetailPage({ params }: PageProps) {
           </Link>
           <ChevronLeft size={14} />
           <Link
-            href={`/category/${transformedProduct.categorySlug}`}
+            href={`/category/${product.categorySlug}`}
             className="hover:text-gold-200 transition-colors"
           >
-            {transformedProduct.categoryName}
+            {product.categoryName}
           </Link>
           <ChevronLeft size={14} />
           <span className="text-ivory-200">{product.name}</span>
         </nav>
       </div>
 
-      <ProductDetailClient product={transformedProduct} />
+      <ProductDetailClient product={product} />
 
       {/* Trust badges */}
       <section className="container-brand py-12">
