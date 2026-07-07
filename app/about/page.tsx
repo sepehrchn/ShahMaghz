@@ -47,11 +47,12 @@ export default function AboutPage() {
           </div>
           <div className="lg:col-span-5 reveal-on-scroll">
             <div className="aspect-[4/5] rounded-2xl bg-gradient-to-br from-forest-700 to-forest-950 border border-gold-400/20 overflow-hidden relative">
-              {/* TODO: replace placeholder image */}
-              <div className="absolute inset-0 bg-kraft-texture opacity-30" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <p className="text-ivory-400/40 text-sm">تصویر دکان قدیمی</p>
-              </div>
+              <img
+                src="https://res.cloudinary.com/pjx9e2r5/image/upload/v1783426645/shahmaghz-assets/about-old-shop.jpg"
+                alt="دکان قدیمی شاه‌مغز در بازار تهران"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-forest-950/40 to-transparent" />
             </div>
           </div>
         </div>

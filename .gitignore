@@ -39,3 +39,6 @@ prisma/dev.db-journal
 
 # cloudinary mapping (contains credentials in URLs)
 cloudinary-image-mapping.json
+
+# Local image assets (uploaded to Cloudinary)
+images/

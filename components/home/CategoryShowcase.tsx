@@ -12,6 +12,7 @@ interface Category {
   name: string;
   description: string;
   productCount: number;
+  image: string | null;
 }
 
 export function CategoryShowcase() {
@@ -69,14 +70,22 @@ export function CategoryShowcase() {
                   {/* Texture */}
                   <div className="absolute inset-0 bg-linen-texture opacity-20" />
 
-                  {/* TODO: replace placeholder image with real category photography */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-20 h-20 rounded-full bg-gold-400/10 border border-gold-400/20 flex items-center justify-center">
-                      <span className="text-3xl font-display font-bold text-gold-400/40">
-                        {toPersianDigits(index + 1)}
-                      </span>
+                  {cat.image ? (
+                    <img
+                      src={cat.image}
+                      alt={cat.name}
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  ) : (
+                    /* Fallback: Texture + Number placeholder */
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="w-20 h-20 rounded-full bg-gold-400/10 border border-gold-400/20 flex items-center justify-center">
+                        <span className="text-3xl font-display font-bold text-gold-400/40">
+                          {toPersianDigits(index + 1)}
+                        </span>
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   {/* Content overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-forest-950/90 via-forest-950/30 to-transparent" />
