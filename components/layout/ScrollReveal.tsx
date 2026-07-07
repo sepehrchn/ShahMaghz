@@ -18,7 +18,7 @@ export function ScrollReveal() {
           }
         });
       },
-      { threshold: 0.05, rootMargin: "50px 0px 0px 0px" }
+      { threshold: 0.01, rootMargin: "100px 0px 100px 0px" }
     );
 
     function observeAll() {
@@ -31,7 +31,7 @@ export function ScrollReveal() {
     // Initial observation
     observeAll();
 
-    // Re-observe after dynamic content loads (e.g. async server components)
+    // Re-observe after dynamic content loads
     const mutationObserver = new MutationObserver(() => {
       observeAll();
     });
@@ -40,9 +40,17 @@ export function ScrollReveal() {
       subtree: true,
     });
 
+    // Fail-safe: Reveal everything after 800ms in case observer fails to trigger
+    const failSafeTimeout = setTimeout(() => {
+      document.querySelectorAll(".reveal-on-scroll:not(.is-visible)").forEach((el) => {
+        el.classList.add("is-visible");
+      });
+    }, 800);
+
     return () => {
       observer.disconnect();
       mutationObserver.disconnect();
+      clearTimeout(failSafeTimeout);
     };
   }, []);
 
