@@ -34,8 +34,19 @@ export function Bestsellers() {
   useEffect(() => {
     fetch('/api/products?featured=true')
       .then(res => res.json())
-      .then(data => setFeatured(data.slice(0, 6)))
-      .catch(err => console.error('Error fetching products:', err));
+      .then(data => {
+        // Handle both success (array) and error (object with error field)
+        if (Array.isArray(data)) {
+          setFeatured(data.slice(0, 6));
+        } else {
+          console.error('API returned non-array:', data);
+          setFeatured([]);
+        }
+      })
+      .catch(err => {
+        console.error('Error fetching products:', err);
+        setFeatured([]);
+      });
   }, []);
 
   const handleQuickAdd = (product: Product) => {

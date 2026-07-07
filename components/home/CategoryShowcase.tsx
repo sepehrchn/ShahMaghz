@@ -20,8 +20,19 @@ export function CategoryShowcase() {
   useEffect(() => {
     fetch('/api/categories')
       .then(res => res.json())
-      .then(data => setCategories(data))
-      .catch(err => console.error('Error fetching categories:', err));
+      .then(data => {
+        // Handle both success (array) and error (object with error field)
+        if (Array.isArray(data)) {
+          setCategories(data);
+        } else {
+          console.error('API returned non-array:', data);
+          setCategories([]);
+        }
+      })
+      .catch(err => {
+        console.error('Error fetching categories:', err);
+        setCategories([]);
+      });
   }, []);
   return (
     <section className="py-16 lg:py-20 bg-forest-900 bg-kraft-texture">
