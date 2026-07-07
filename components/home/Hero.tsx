@@ -2,8 +2,12 @@ import Link from "next/link";
 import { ArrowLeft, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { WaxSeal } from "@/components/ui/BrandMotifs";
+import { getProductBySlug } from "@/lib/mock-data";
 
 export function Hero() {
+  const heroLarge = getProductBySlug("pistachio-akbari");
+  const heroSmall = getProductBySlug("saffron-threads");
+
   return (
     <section className="relative overflow-hidden bg-forest-950">
       {/* Texture overlay */}
@@ -70,18 +74,24 @@ export function Hero() {
             <div className="relative grid grid-cols-12 gap-4">
               {/* Large image block */}
               <div className="col-span-8 aspect-[4/5] rounded-2xl bg-gradient-to-br from-forest-700 to-forest-900 border border-gold-400/20 overflow-hidden relative shadow-2xl shadow-forest-950/50">
-                {/* TODO: replace placeholder image with real product photography */}
-                <div className="absolute inset-0 bg-linen-texture opacity-30" />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="w-24 h-24 mx-auto rounded-full bg-gold-400/10 border border-gold-400/30 flex items-center justify-center mb-4">
-                      <Sparkles size={36} className="text-gold-400/60" />
+                {heroLarge?.images?.[0] ? (
+                  <img
+                    src={heroLarge.images[0]}
+                    alt={heroLarge.name}
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                ) : (
+                  <>
+                    <div className="absolute inset-0 bg-linen-texture opacity-30" />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="text-center">
+                        <div className="w-24 h-24 mx-auto rounded-full bg-gold-400/10 border border-gold-400/30 flex items-center justify-center mb-4">
+                          <Sparkles size={36} className="text-gold-400/60" />
+                        </div>
+                      </div>
                     </div>
-                    <p className="text-ivory-400/40 text-sm">
-                      تصویر محصول — پسته اکبری ممتاز
-                    </p>
-                  </div>
-                </div>
+                  </>
+                )}
                 {/* Wax seal overlay */}
                 <div className="absolute top-4 start-4">
                   <WaxSeal label="ممتاز" />
@@ -90,13 +100,17 @@ export function Hero() {
 
               {/* Small image block — offset for asymmetry */}
               <div className="col-span-4 mt-12 aspect-square rounded-2xl bg-gradient-to-tr from-forest-600 to-forest-800 border border-forest-500/30 overflow-hidden relative shadow-xl">
-                {/* TODO: replace placeholder image */}
-                <div className="absolute inset-0 bg-kraft-texture opacity-30" />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <p className="text-ivory-400/40 text-xs text-center px-4">
-                    تصویر محصول —<br />زعفران نگین
-                  </p>
-                </div>
+                {heroSmall?.images?.[0] ? (
+                  <img
+                    src={heroSmall.images[0]}
+                    alt={heroSmall.name}
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                ) : (
+                  <>
+                    <div className="absolute inset-0 bg-kraft-texture opacity-30" />
+                  </>
+                )}
               </div>
 
               {/* Floating badge — editorial style */}

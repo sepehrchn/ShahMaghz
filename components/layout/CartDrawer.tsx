@@ -55,11 +55,13 @@ export function CartDrawer() {
         aria-hidden={!isOpen}
       />
 
-      {/* Drawer — slides from left (RTL: visually from right edge) */}
+      {/* Drawer — anchored to the inline-start edge (right in RTL).
+          Closed: translate-x-full pushes it fully off the right edge (hidden).
+          Open: translate-x-0 brings it flush to the edge (visible). */}
       <aside
         className={cn(
           "fixed top-0 bottom-0 start-0 z-50 w-full max-w-md bg-forest-900 border-e border-forest-600/40 shadow-2xl transition-transform duration-300 flex flex-col",
-          isOpen ? "translate-x-0" : "-translate-x-full"
+          isOpen ? "translate-x-0" : "translate-x-full"
         )}
         dir="rtl"
         role="dialog"
