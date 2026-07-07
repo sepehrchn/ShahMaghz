@@ -50,7 +50,9 @@ export function Footer() {
             </p>
             <div className="flex items-center gap-3 mt-2">
               <a
-                href="#"
+                href="https://instagram.com/shahmaghz"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="p-2 rounded-lg bg-forest-700/50 text-ivory-300 hover:text-gold-200 hover:bg-forest-600 transition-all"
                 aria-label="اینستاگرام"
               >
