@@ -1,19 +1,27 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useEffect, type ReactNode } from "react";
 import { useAdminStore } from "@/lib/admin-store";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 
 export function AdminGuard({ children }: { children: ReactNode }) {
   const router = useRouter();
+  const pathname = usePathname();
   const { isAuthenticated } = useAdminStore();
 
+  const isLoginPage = pathname === "/admin/login";
+
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!isAuthenticated && !isLoginPage) {
       router.push("/admin/login");
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, isLoginPage, router]);
+
+  // Let the login page render without the guard
+  if (isLoginPage) {
+    return <>{children}</>;
+  }
 
   if (!isAuthenticated) {
     return (

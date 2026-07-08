@@ -10,7 +10,7 @@ interface AdminState {
 
 /**
  * Admin auth store — mock implementation.
- * Default credentials: admin / shahmaghz1403
+ * Default credentials: admin / admin123
  * In production, replace with NextAuth.js + admin role check.
  */
 export const useAdminStore = create<AdminState>()(
@@ -19,7 +19,7 @@ export const useAdminStore = create<AdminState>()(
       isAuthenticated: false,
       username: "",
       login: (username, password) => {
-        if (username === "admin" && password === "shahmaghz1403") {
+        if (username === "admin" && password === "admin123") {
           set({ isAuthenticated: true, username });
           return true;
         }
