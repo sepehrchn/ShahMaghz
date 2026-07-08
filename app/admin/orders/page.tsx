@@ -32,8 +32,8 @@ export default function AdminOrdersPage() {
   const filtered = orders.filter((o) => {
     const matchesSearch =
       o.orderNumber.toLowerCase().includes(search.toLowerCase()) ||
-      o.shippingInfo.recipient.includes(search) ||
-      o.shippingInfo.mobile.includes(search);
+      (o.shippingInfo?.recipient || '').includes(search) ||
+      (o.shippingInfo?.mobile || '').includes(search);
     const matchesStatus = statusFilter === "ALL" || o.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
@@ -112,8 +112,8 @@ export default function AdminOrdersPage() {
                         </Link>
                       </td>
                       <td className="p-4">
-                        <p className="text-ivory-200">{order.shippingInfo.recipient}</p>
-                        <p className="text-xs text-ivory-400">{toPersianDigits(order.shippingInfo.mobile)}</p>
+                        <p className="text-ivory-200">{order.shippingInfo?.recipient || '—'}</p>
+                        <p className="text-xs text-ivory-400">{toPersianDigits(order.shippingInfo?.mobile || '')}</p>
                       </td>
                       <td className="p-4 text-ivory-400 text-xs">{formatPersianDate(order.createdAt)}</td>
                       <td className="p-4 text-ivory-300">{toPersianDigits((order.items || []).length)} کالا</td>

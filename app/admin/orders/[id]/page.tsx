@@ -84,11 +84,11 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
               آدرس ارسال
             </h2>
             <div className="text-sm text-ivory-300 flex flex-col gap-1">
-              <p className="font-medium text-ivory-100">{order.shippingInfo.recipient}</p>
-              <p>{toPersianDigits(order.shippingInfo.mobile)}</p>
-              <p>{order.shippingInfo.province}، {order.shippingInfo.city}</p>
-              <p className="text-ivory-400 text-xs">{order.shippingInfo.addressLine}</p>
-              <p className="text-xs text-ivory-400/60">کد پستی: {toPersianDigits(order.shippingInfo.postalCode)}</p>
+              <p className="font-medium text-ivory-100">{order.shippingInfo?.recipient || '—'}</p>
+              <p>{toPersianDigits(order.shippingInfo?.mobile || '')}</p>
+              <p>{order.shippingInfo?.province || ''}، {order.shippingInfo?.city || ''}</p>
+              <p className="text-ivory-400 text-xs">{order.shippingInfo?.addressLine || ''}</p>
+              <p className="text-xs text-ivory-400/60">کد پستی: {toPersianDigits(order.shippingInfo?.postalCode || '')}</p>
               {order.customerNote && (
                 <p className="text-xs text-ivory-400 mt-2 pt-2 border-t border-forest-600/20">
                   یادداشت: {order.customerNote}
