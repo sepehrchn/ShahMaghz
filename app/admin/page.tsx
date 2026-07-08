@@ -37,7 +37,7 @@ export default function AdminDashboard() {
 
   const pendingOrders = orders.filter((o) => o.status === "PENDING");
   const lowStockProducts = products.filter((p) =>
-    p.variants.some((v) => v.stock <= 5)
+    (p.variants || []).some((v) => v.stock <= 5)
   );
 
   const recentOrders = orders.slice(0, 5);
@@ -149,7 +149,7 @@ export default function AdminDashboard() {
                       {formatPersianDate(order.createdAt)}
                     </td>
                     <td className="py-3 text-ivory-300">
-                      {toPersianDigits(order.items.length)}
+                      {toPersianDigits((order.items || []).length)}
                     </td>
                     <td className="py-3 text-ivory-200 font-medium">
                       {formatPrice(order.totalAmount, false)}

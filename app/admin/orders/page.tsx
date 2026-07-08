@@ -116,7 +116,7 @@ export default function AdminOrdersPage() {
                         <p className="text-xs text-ivory-400">{toPersianDigits(order.shippingInfo.mobile)}</p>
                       </td>
                       <td className="p-4 text-ivory-400 text-xs">{formatPersianDate(order.createdAt)}</td>
-                      <td className="p-4 text-ivory-300">{toPersianDigits(order.items.length)} کالا</td>
+                      <td className="p-4 text-ivory-300">{toPersianDigits((order.items || []).length)} کالا</td>
                       <td className="p-4 text-gold-200 font-medium">{formatPrice(order.totalAmount, false)}</td>
                       <td className="p-4">
                         <span className={cn("text-xs px-2 py-1 rounded-full", status.color)}>

@@ -59,7 +59,7 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
           <div className="bg-forest-800/50 border border-forest-600/30 rounded-2xl p-6">
             <h2 className="text-sm font-display font-bold text-gold-200 mb-4">اقلام سفارش</h2>
             <div className="flex flex-col gap-4">
-              {order.items.map((item, i) => (
+              {(order.items || []).map((item, i) => (
                 <div key={i} className="flex items-center gap-4 pb-4 border-b border-forest-600/20 last:border-0 last:pb-0">
                   <div className="w-12 h-12 rounded-xl bg-forest-700/60 border border-forest-500/30 flex items-center justify-center shrink-0">
                     <Package size={16} className="text-ivory-400/40" />

@@ -55,7 +55,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           <div className="flex items-center gap-3 text-sm text-ivory-400 mb-6">
             <Calendar size={16} className="text-gold-400" />
             <span>{formatPersianDate(post.publishedAt?.toISOString() || post.createdAt.toISOString())}</span>
-            {post.tags.map((tag: string) => (
+            {(post.tags || []).map((tag: string) => (
               <span
                 key={tag}
                 className="text-xs text-gold-200/70 bg-gold-400/10 px-2 py-1 rounded-full"

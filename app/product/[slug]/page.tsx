@@ -48,7 +48,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         offers: {
           "@type": "Offer",
           priceCurrency: "IRR",
-          price: Math.min(...product.variants.map((v) => v.price)),
+          price: Math.min(...(product.variants || []).map((v) => v.price)),
           availability:
             product.stockStatus === "OUT_OF_STOCK"
               ? "https://schema.org/OutOfStock"

@@ -34,7 +34,7 @@ export function ProductGrid({ products: initialProducts, categoryName }: Product
 
     // Price filter (based on min variant price)
     result = result.filter((p) => {
-      const minPrice = Math.min(...p.variants.map((v) => v.price));
+      const minPrice = Math.min(...(p.variants || []).map((v) => v.price));
       return minPrice >= priceRange[0] && minPrice <= priceRange[1];
     });
 
@@ -43,15 +43,15 @@ export function ProductGrid({ products: initialProducts, categoryName }: Product
       case "price-asc":
         result.sort(
           (a, b) =>
-            Math.min(...a.variants.map((v) => v.price)) -
-            Math.min(...b.variants.map((v) => v.price))
+            Math.min(...(a.variants || []).map((v) => v.price)) -
+            Math.min(...(b.variants || []).map((v) => v.price))
         );
         break;
       case "price-desc":
         result.sort(
           (a, b) =>
-            Math.min(...b.variants.map((v) => v.price)) -
-            Math.min(...a.variants.map((v) => v.price))
+            Math.min(...(b.variants || []).map((v) => v.price)) -
+            Math.min(...(a.variants || []).map((v) => v.price))
         );
         break;
       case "rating":
@@ -63,7 +63,8 @@ export function ProductGrid({ products: initialProducts, categoryName }: Product
   }, [initialProducts, sortBy, selectedStock, priceRange]);
 
   const handleQuickAdd = (product: MockProduct) => {
-    const variant = product.variants[0];
+    const variant = product.variants?.[0];
+    if (!variant) return;
     addItem({
       productId: product.id,
       productSlug: product.slug,
@@ -211,8 +212,8 @@ function ProductCard({
   product: MockProduct;
   onQuickAdd: () => void;
 }) {
-  const minPrice = Math.min(...product.variants.map((v) => v.price));
-  const hasDiscount = product.variants.some((v) => v.compareAtPrice);
+  const minPrice = Math.min(...(product.variants || []).map((v) => v.price));
+  const hasDiscount = (product.variants || []).some((v) => v.compareAtPrice);
 
   return (
     <article className="product-card-reveal group relative bg-forest-800/60 border border-forest-600/30 rounded-2xl overflow-hidden hover:border-gold-400/30 hover:shadow-xl hover:shadow-forest-950/40 transition-all duration-300">
@@ -290,7 +291,7 @@ function ProductCard({
               {formatPrice(minPrice)}
             </span>
             <span className="text-xs text-ivory-400">
-              از {toPersianDigits(product.variants.length)} بسته‌بندی
+              از {toPersianDigits((product.variants || []).length)} بسته‌بندی
             </span>
           </div>
 

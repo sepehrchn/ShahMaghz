@@ -88,8 +88,8 @@ export default function AdminProductsPage() {
                 </tr>
               ) : (
                 filtered.map((product) => {
-                  const minPrice = Math.min(...product.variants.map((v) => v.price));
-                  const totalStock = product.variants.reduce((sum, v) => sum + v.stock, 0);
+                  const minPrice = Math.min(...(product.variants || []).map((v) => v.price));
+                  const totalStock = (product.variants || []).reduce((sum, v) => sum + v.stock, 0);
                   return (
                     <tr key={product.id} className="border-b border-forest-600/20 last:border-0 hover:bg-forest-700/20">
                       <td className="p-4">

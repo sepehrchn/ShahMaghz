@@ -33,7 +33,7 @@ export function OrderList() {
               status: order.status,
               createdAt: order.createdAt,
               totalAmount: order.totalAmount,
-              items: order.order_items.map((item: any) => ({
+              items: (order.order_items || []).map((item: any) => ({
                 productId: item.productId,
                 productName: item.productName,
                 variantLabel: item.variantLabel,
@@ -120,7 +120,7 @@ export function OrderList() {
                   {/* Items summary */}
                   <div className="flex items-center gap-2 mt-1">
                     <div className="flex -space-x-2">
-                      {order.items.slice(0, 3).map((item: any, i: number) => (
+                      {(order.items || []).slice(0, 3).map((item: any, i: number) => (
                         <div
                           key={i}
                           className="w-8 h-8 rounded-lg bg-forest-700/60 border border-forest-500/30 overflow-hidden"
@@ -134,7 +134,7 @@ export function OrderList() {
                       ))}
                     </div>
                     <span className="text-xs text-ivory-400">
-                      {toPersianDigits(order.items.length)} کالا
+                      {toPersianDigits((order.items || []).length)} کالا
                     </span>
                   </div>
                 </div>
